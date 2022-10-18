@@ -1,12 +1,11 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.IO;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.InputFiles;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace TelegramTestProject
+namespace scheduleBot
 {
 
     class Program
@@ -14,50 +13,45 @@ namespace TelegramTestProject
         static ITelegramBotClient bot = new TelegramBotClient("TOKEN");
         public static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
-            // логирование в json 
-            //Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(update));
+            if (update.Message is not { } message)
+                return;
+            if (message.Text is not { } messageText)
+                return;
 
             if (update.Type == Telegram.Bot.Types.Enums.UpdateType.Message)
             {
-                var message = update.Message;
-                if (message.Text.ToLower() == "/start")
+                var chatId = message.Chat.Id;
+                switch (message.Text.ToLower())
                 {
-                    SendInline(botClient: botClient, chatId: message.Chat.Id, cancellationToken: cancellationToken);
-                    return;
-                }
-            }
-            if (update.Type == Telegram.Bot.Types.Enums.UpdateType.CallbackQuery)
-            {
-                string codeOfButton = update.CallbackQuery.Data;
-                if (codeOfButton == "test1")
-                {
-                    Console.WriteLine("Нажата Кнопка 1");
-                    string telegramMessage = "Вы нажали Кнопку 1";
-
-                    //await botClient.SendTextMessageAsync(chatId: update.CallbackQuery.Message.Chat.Id, telegramMessage, parseMode: Telegram.Bot.Types.Enums.ParseMode.Html);
-                }
-                if (codeOfButton == "test2")
-                {
-                    Console.WriteLine("Нажата Кнопка 2");
-                    string telegramMessage = "Вы нажали Кнопку 2";
-                    // await botClient.SendTextMessageAsync(chatId: update.CallbackQuery.Message.Chat.Id, telegramMessage, parseMode: Telegram.Bot.Types.Enums.ParseMode.Html);
-
-                    InlineKeyboardMarkup inlineKeyBoard = new InlineKeyboardMarkup(
-                        new[]
+                    case "/start":
+                        MainInline(botClient: botClient, chatId: chatId, cancellationToken: cancellationToken);
+                        break;
+                    case "test1":
                         {
-                            // first row
-                            new[]
-                            {
-                                // first button in row
-                                InlineKeyboardButton.WithCallbackData(text: "1", callbackData: "test1"),
-                                // second button in row
-                                InlineKeyboardButton.WithCallbackData(text: "2", callbackData: "test2"),
-                            },
+                            Console.WriteLine("Нажата Кнопка 1");
+                            bot.SendTextMessageAsync(chatId: message.Chat.Id, text: "Ви натиснули Кнопку 1");
+                            break;
+                        }
+                    case "test2":
+                        {
+                            Console.WriteLine("Нажата Кнопка 2");
+                            bot.SendTextMessageAsync(chatId: message.Chat.Id, text: "Ви натиснули Кнопку 2");
+                            break;
+                        }
+                    case "download":
+                        {
+                            Console.WriteLine("Нажата кнопка download");
 
-                        });
-
-                    // // await botClient.EditMessageCaptionAsync(chatId: update.CallbackQuery.Message.Chat.Id, caption: telegramMessage, messageId: update.CallbackQuery.Message.MessageId);
-                    // await bot.EditMessageTextAsync(update.CallbackQuery.Message.Chat.Id, update.CallbackQuery.Message.MessageId, telegramMessage, replyMarkup: inlineKeyBoard, parseMode: Telegram.Bot.Types.Enums.ParseMode.Html);
+                            await using Stream stream = System.IO.File.OpenRead(@"./main.xls");
+                            botClient.SendDocumentAsync(
+                            chatId: chatId,
+                            document: new InputOnlineFile(content: stream, fileName: "main.xls"),
+                            caption: "Розклад на 1 семестр 2022",
+                            cancellationToken: cancellationToken);
+                            break;
+                        }
+                    default:
+                        break;
                 }
             }
         }
@@ -68,18 +62,30 @@ namespace TelegramTestProject
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(exception));
         }
 
+        public static async void MainInline(ITelegramBotClient botClient, long chatId, CancellationToken cancellationToken)
+        {
+            ReplyKeyboardMarkup replyKeyboardMarkup = new(
+                new[]
+                    {
+                        new KeyboardButton[] {"test1", "test2", "download" }
+                        //new KeyboardButton[] { "Download" }
+                    }
+                    )
+            { ResizeKeyboard = true };
 
+            Message sentMessage = await botClient.SendTextMessageAsync(
+                chatId: chatId,
+                text: "Choose a response",
+                replyMarkup: replyKeyboardMarkup,
+                cancellationToken: cancellationToken);
+        }
         static void Main(string[] args)
         {
             Console.WriteLine($"Start listening for @{bot.GetMeAsync().Result.Username}");
 
-           
             var cts = new CancellationTokenSource();
             var cancellationToken = cts.Token;
-            var receiverOptions = new ReceiverOptions
-            {
-                AllowedUpdates = { }, 
-            };
+            var receiverOptions = new ReceiverOptions { AllowedUpdates = { }, };
             bot.StartReceiving(
                 HandleUpdateAsync,
                 HandleErrorAsync,
@@ -88,27 +94,9 @@ namespace TelegramTestProject
             );
             Console.ReadLine();
         }
-
-        public static async void SendInline(ITelegramBotClient botClient, long chatId, CancellationToken cancellationToken)
-        {
-            InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
-                // keyboard
-                new[]
-                {
-                    // first row
-                    new[]
-                    {
-                        // first button in row
-                        InlineKeyboardButton.WithCallbackData(text: "1", callbackData: "test1"),
-                        // second button in row
-                        InlineKeyboardButton.WithCallbackData(text: "2", callbackData: "test2"),
-                    },
-                });
-            Message sentMessage = await botClient.SendTextMessageAsync(
-                chatId: chatId,
-                text: "test",
-                replyMarkup: inlineKeyboard,
-                cancellationToken: cancellationToken);
-        }
     }
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> b8a913d (update)
