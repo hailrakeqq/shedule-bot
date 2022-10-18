@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/media/hdd/code/scheduleBot/scheduleBot.csproj": {}
+    "/media/hdd/code/shedule-bot/scheduleBot.csproj": {}
   },
   "projects": {
-    "/media/hdd/code/scheduleBot/scheduleBot.csproj": {
+    "/media/hdd/code/shedule-bot/scheduleBot.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/media/hdd/code/scheduleBot/scheduleBot.csproj",
+        "projectUniqueName": "/media/hdd/code/shedule-bot/scheduleBot.csproj",
         "projectName": "scheduleBot",
-        "projectPath": "/media/hdd/code/scheduleBot/scheduleBot.csproj",
+        "projectPath": "/media/hdd/code/shedule-bot/scheduleBot.csproj",
         "packagesPath": "/home/desktop/.nuget/packages/",
-        "outputPath": "/media/hdd/code/scheduleBot/obj/",
+        "outputPath": "/media/hdd/code/shedule-bot/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/desktop/.nuget/NuGet/NuGet.Config"
@@ -45,6 +45,10 @@
             "Newtonsoft.Json": {
               "target": "Package",
               "version": "[13.0.1, )"
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[6.0.7, )"
             },
             "telegram.bot": {
               "target": "Package",

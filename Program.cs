@@ -5,7 +5,7 @@ using Telegram.Bot.Types.InputFiles;
 using Telegram.Bot.Types.ReplyMarkups;
 using Newtonsoft.Json;
 
-namespace scheduleBot
+namespace schedule_bot
 {
     struct BotUpdates
     {
@@ -16,9 +16,10 @@ namespace scheduleBot
 
     class Program
     {
-        static ITelegramBotClient bot = new TelegramBotClient(ToolChain.GetToken());
+        static ITelegramBotClient bot = new TelegramBotClient(ToolChain.GetItemFromDotEnv("TOKEN"));
         static string fileName = "update.json";
         static List<BotUpdates> botUpdates = new List<BotUpdates>();
+
         public static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
             if (update.Message is not { } message)
@@ -29,6 +30,7 @@ namespace scheduleBot
             if (update.Type == Telegram.Bot.Types.Enums.UpdateType.Message)
             {
                 long chatId = message.Chat.Id;
+
                 //write updates to json
                 var _botUpdates = new BotUpdates
                 {
@@ -36,11 +38,14 @@ namespace scheduleBot
                     chatId = message.Chat.Id,
                     username = message.Chat.Username
                 };
+
+                Console.WriteLine($"username: {_botUpdates.username} | channel id: {_botUpdates.chatId} | text: {_botUpdates.text}");
                 botUpdates.Add(_botUpdates);
 
                 var botUpdatesString = JsonConvert.SerializeObject(botUpdates);
                 System.IO.File.WriteAllText(fileName, botUpdatesString);
 
+                //responce on different command
                 switch (message.Text.ToLower())
                 {
                     case "/start":
@@ -99,12 +104,7 @@ namespace scheduleBot
 
             var cts = new CancellationTokenSource();
             var receiverOptions = new ReceiverOptions { AllowedUpdates = { }, };
-            bot.StartReceiving(
-                HandleUpdateAsync,
-                HandleErrorAsync,
-                receiverOptions,
-                cts.Token
-            );
+            bot.StartReceiving(HandleUpdateAsync, HandleErrorAsync, receiverOptions, cts.Token);
             Console.ReadLine();
         }
     }

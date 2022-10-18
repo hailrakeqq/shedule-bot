@@ -1,15 +1,14 @@
-using System.Runtime.Serialization.Json;
-using System.Runtime.Serialization;
 using Newtonsoft.Json;
-namespace scheduleBot
+
+namespace schedule_bot
 {
     public class ToolChain
     {
-        public static string GetToken() //can use for get data from .env file
+        public static string GetItemFromDotEnv(string value) //can use for get data from .env file
         {
             DotNetEnv.Env.Load();
-            string? token = Environment.GetEnvironmentVariable("TOKEN");
-            return token;
+            string? item = Environment.GetEnvironmentVariable(value);
+            return item;
         }
 
         static List<BotUpdates> botUpdates = new List<BotUpdates>();
@@ -21,10 +20,7 @@ namespace scheduleBot
 
                 botUpdates = JsonConvert.DeserializeObject<List<BotUpdates>>(botUpdatesString) ?? botUpdates;
             }
-            catch (System.Exception ex)
-            {
-                Console.WriteLine($"Error reading or deserializing: {ex}");
-            }
+            catch (System.Exception ex) { Console.WriteLine($"Error reading or deserializing: {ex}"); }
         }
 
     }
