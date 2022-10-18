@@ -16,3 +16,5 @@
 /media/hdd/code/scheduleBot/obj/Debug/net6.0/scheduleBot.pdb
 /media/hdd/code/scheduleBot/obj/Debug/net6.0/scheduleBot.genruntimeconfig.cache
 /media/hdd/code/scheduleBot/obj/Debug/net6.0/ref/scheduleBot.dll
+/media/hdd/code/scheduleBot/bin/Debug/net6.0/DotNetEnv.dll
+/media/hdd/code/scheduleBot/bin/Debug/net6.0/Sprache.dll

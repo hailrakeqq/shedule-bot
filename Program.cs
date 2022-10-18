@@ -1,16 +1,24 @@
-﻿using System.IO;
-using Telegram.Bot;
+﻿using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.InputFiles;
 using Telegram.Bot.Types.ReplyMarkups;
+using Newtonsoft.Json;
 
 namespace scheduleBot
 {
+    struct BotUpdates
+    {
+        public long chatId;
+        public string? username;
+        public string text;
+    }
 
     class Program
     {
-        static ITelegramBotClient bot = new TelegramBotClient("TOKEN");
+        static ITelegramBotClient bot = new TelegramBotClient(ToolChain.GetToken());
+        static string fileName = "update.json";
+        static List<BotUpdates> botUpdates = new List<BotUpdates>();
         public static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
             if (update.Message is not { } message)
@@ -20,7 +28,19 @@ namespace scheduleBot
 
             if (update.Type == Telegram.Bot.Types.Enums.UpdateType.Message)
             {
-                var chatId = message.Chat.Id;
+                long chatId = message.Chat.Id;
+                //write updates to json
+                var _botUpdates = new BotUpdates
+                {
+                    text = message.Text,
+                    chatId = message.Chat.Id,
+                    username = message.Chat.Username
+                };
+                botUpdates.Add(_botUpdates);
+
+                var botUpdatesString = JsonConvert.SerializeObject(botUpdates);
+                System.IO.File.WriteAllText(fileName, botUpdatesString);
+
                 switch (message.Text.ToLower())
                 {
                     case "/start":
@@ -28,20 +48,16 @@ namespace scheduleBot
                         break;
                     case "test1":
                         {
-                            Console.WriteLine("Нажата Кнопка 1");
                             bot.SendTextMessageAsync(chatId: message.Chat.Id, text: "Ви натиснули Кнопку 1");
                             break;
                         }
                     case "test2":
                         {
-                            Console.WriteLine("Нажата Кнопка 2");
                             bot.SendTextMessageAsync(chatId: message.Chat.Id, text: "Ви натиснули Кнопку 2");
                             break;
                         }
                     case "download":
                         {
-                            Console.WriteLine("Нажата кнопка download");
-
                             await using Stream stream = System.IO.File.OpenRead(@"./main.xls");
                             botClient.SendDocumentAsync(
                             chatId: chatId,
@@ -58,7 +74,6 @@ namespace scheduleBot
 
         public static async Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
-            // Некоторые действия
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(exception));
         }
 
@@ -69,8 +84,7 @@ namespace scheduleBot
                     {
                         new KeyboardButton[] {"test1", "test2", "download" }
                         //new KeyboardButton[] { "Download" }
-                    }
-                    )
+                    })
             { ResizeKeyboard = true };
 
             Message sentMessage = await botClient.SendTextMessageAsync(
@@ -84,19 +98,16 @@ namespace scheduleBot
             Console.WriteLine($"Start listening for @{bot.GetMeAsync().Result.Username}");
 
             var cts = new CancellationTokenSource();
-            var cancellationToken = cts.Token;
             var receiverOptions = new ReceiverOptions { AllowedUpdates = { }, };
             bot.StartReceiving(
                 HandleUpdateAsync,
                 HandleErrorAsync,
                 receiverOptions,
-                cancellationToken
+                cts.Token
             );
             Console.ReadLine();
         }
     }
 }
-<<<<<<< HEAD
-=======
 
->>>>>>> b8a913d (update)
+
