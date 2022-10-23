@@ -2,8 +2,8 @@
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.InputFiles;
-using Telegram.Bot.Types.ReplyMarkups;
 using Newtonsoft.Json;
+using shedule_bot.backend;
 
 namespace schedule_bot
 {
@@ -38,10 +38,8 @@ namespace schedule_bot
                     chatId = message.Chat.Id,
                     username = message.Chat.Username
                 };
-
                 Console.WriteLine($"username: {_botUpdates.username} | channel id: {_botUpdates.chatId} | text: {_botUpdates.text}");
                 botUpdates.Add(_botUpdates);
-
                 var botUpdatesString = JsonConvert.SerializeObject(botUpdates);
                 System.IO.File.WriteAllText(fileName, botUpdatesString);
 
@@ -49,9 +47,11 @@ namespace schedule_bot
                 switch (message.Text.ToLower())
                 {
                     case "/start":
-                        MainInline(botClient: botClient, chatId: chatId, cancellationToken: cancellationToken);
+                        string chooseGroup = UserInterface.InitialChooseUserGroup();
+                        UserInterface.InitialCreateUser(_botUpdates.username, chooseGroup);
+                        bot.SendTextMessageAsync(chatId: message.Chat.Id, text: $"Ви успішно вибрали групу: {chooseGroup}\nЯкщо ви обрали не правильно або хочете змінити групу натисніть кнопку \"змінити групу\"");
                         break;
-                    case "test1":
+                    case "getDbList":
                         {
                             bot.SendTextMessageAsync(chatId: message.Chat.Id, text: "Ви натиснули Кнопку 1");
                             break;
@@ -61,6 +61,11 @@ namespace schedule_bot
                             bot.SendTextMessageAsync(chatId: message.Chat.Id, text: "Ви натиснули Кнопку 2");
                             break;
                         }
+                    // case "testcreateuser":
+                    //     {
+                    //         UserInterface.TestCreateUser(_botUpdates.username, "KSM");
+                    //         break;
+                    //     }
                     case "download":
                         {
                             await using Stream stream = System.IO.File.OpenRead(@"./main.xls");
@@ -82,22 +87,6 @@ namespace schedule_bot
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(exception));
         }
 
-        public static async void MainInline(ITelegramBotClient botClient, long chatId, CancellationToken cancellationToken)
-        {
-            ReplyKeyboardMarkup replyKeyboardMarkup = new(
-                new[]
-                    {
-                        new KeyboardButton[] {"test1", "test2", "download" }
-                        //new KeyboardButton[] { "Download" }
-                    })
-            { ResizeKeyboard = true };
-
-            Message sentMessage = await botClient.SendTextMessageAsync(
-                chatId: chatId,
-                text: "Choose a response",
-                replyMarkup: replyKeyboardMarkup,
-                cancellationToken: cancellationToken);
-        }
         static void Main(string[] args)
         {
             Console.WriteLine($"Start listening for @{bot.GetMeAsync().Result.Username}");
@@ -105,9 +94,8 @@ namespace schedule_bot
             var cts = new CancellationTokenSource();
             var receiverOptions = new ReceiverOptions { AllowedUpdates = { }, };
             bot.StartReceiving(HandleUpdateAsync, HandleErrorAsync, receiverOptions, cts.Token);
+            //ApplicationContext.DbConnect();
             Console.ReadLine();
         }
     }
 }
-
-
