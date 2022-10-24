@@ -10,7 +10,6 @@ namespace shedule_bot.backend
     public class User
     {
         [Key]
-        //[Column(Order = 1)]
         public int id { get; set; }
         public string? username { get; set; }
         public string? usergroup { get; set; }
@@ -21,7 +20,7 @@ namespace shedule_bot.backend
         public DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => optionsBuilder.UseNpgsql("Host=localhost;Database=kemkdb;Username=postgres;Password=13378;");
+            => optionsBuilder.UseNpgsql($"Host=localhost;Database=kemkdb;Username=postgres;Password={ToolChain.GetItemFromDotEnv("DbPassword")};");
 
     }
 }

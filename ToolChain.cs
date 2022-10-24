@@ -3,7 +3,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace schedule_bot
+namespace shedule_bot
 {
     public class ToolChain
     {
@@ -35,8 +35,8 @@ namespace schedule_bot
             ReplyKeyboardMarkup replyKeyboardMarkup = new(
                 new[]
                     {
-                        new KeyboardButton[] {"getDbList", "test2", "download" },
-                        new KeyboardButton[] { "testcreateuser" }
+                        new KeyboardButton[] { "download" },
+                        new KeyboardButton[] { "Змінити групу" } //change group func is not realized now(
                     })
             { ResizeKeyboard = true };
 
@@ -64,6 +64,5 @@ namespace schedule_bot
                 replyMarkup: replyKeyboardMarkup,
                 cancellationToken: cancellationToken);
         }
-
     }
 }
