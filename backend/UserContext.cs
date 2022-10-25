@@ -1,7 +1,6 @@
-//using System.Data.Entity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Collections.Generic;
+using Npgsql;
 using Microsoft.EntityFrameworkCore;
 
 namespace shedule_bot.backend
@@ -18,9 +17,22 @@ namespace shedule_bot.backend
     public class ApplicationContext : DbContext
     {
         public DbSet<User> Users { get; set; }
+        public static string connectionString = $"Host=localhost;Database=kemkdb;Username=postgres;Password={ToolChain.GetItemFromDotEnv("DbPassword")};";
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => optionsBuilder.UseNpgsql($"Host=localhost;Database=kemkdb;Username=postgres;Password={ToolChain.GetItemFromDotEnv("DbPassword")};");
+            => optionsBuilder.UseNpgsql(connectionString);
+
+        public static string GetConnectionString() => connectionString;
 
     }
+    // public class DataBaseConnect
+    // {
+    //     private static string connectionString = $"Host=localhost;Username=postgres;Password=${ToolChain.GetItemFromDotEnv("DbPassword")};Database=kemkdb";
+
+    //     public async static void NpgsqlConnect() // Npgsql.NpgsqlConnection
+    //     {
+    //         await using var conn = new NpgsqlConnection(connectionString);
+    //         await conn.OpenAsync();
+    //     }
+    // }
 }

@@ -1,6 +1,6 @@
-using shedule_bot;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Npgsql;
 
 namespace shedule_bot.backend
 {
@@ -54,12 +54,20 @@ namespace shedule_bot.backend
         //check if user exist in db; if exist => return true ; else => return false
         public static bool CheckIfUserExisting(string username)
         {
+            using var connectionToDb = new NpgsqlConnection(ApplicationContext.GetConnectionString());
+            connectionToDb.Open();
+            var cmd = new NpgsqlCommand($"SELECT COUNT(users) FROM users WHERE username = '${username}';", connectionToDb);
+            var commandResult = cmd.ExecuteNonQuery();
+
+            connectionToDb.Close();
+            if (Convert.ToSByte(commandResult) > 0)
+                return true;
             return false;
         }
 
         public static void TestConnection()
         {
-            using (ApplicationContext db = new ApplicationContext())//var conn = new NpgsqlConnection(@$"Server=localhost;Database=kemkdb;User ID=postgres;Password=13378;")
+            using (ApplicationContext db = new ApplicationContext())
             {
                 Console.WriteLine("Opening connection");
             }

@@ -48,9 +48,15 @@ namespace shedule_bot
                 switch (message.Text)
                 {
                     case "/start":
-                        ToolChain.GroupInline(bot, chatId, cts.Token);
+                        try
+                        {
+                            if (UserInterface.CheckIfUserExisting(_botUpdates.username))
+                                ToolChain.MainInline(bot, chatId, cts.Token);
+                            else
+                                ToolChain.GroupInline(bot, chatId, cts.Token);
+                        }
+                        catch (System.Exception ex) { Console.WriteLine(ex); }
                         break;
-
 
                     //it's code work but I'm not sure how correct and better i can do 
                     case "1KCM-A":
