@@ -17,7 +17,7 @@ namespace shedule_bot.backend
     public class ApplicationContext : DbContext
     {
         public DbSet<User> Users { get; set; }
-        public static string connectionString = $"Host=localhost;Database=kemkdb;Username=postgres;Password={ToolChain.GetItemFromDotEnv("DbPassword")};";
+        private static string connectionString = $"Host=localhost;Database=kemkdb;Username=postgres;Password={ToolChain.GetItemFromDotEnv("DbPassword")};";
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
             => optionsBuilder.UseNpgsql(connectionString);

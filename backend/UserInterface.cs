@@ -57,7 +57,7 @@ namespace shedule_bot.backend
             using var connectionToDb = new NpgsqlConnection(ApplicationContext.GetConnectionString());
             connectionToDb.Open();
             var cmd = new NpgsqlCommand($"SELECT COUNT(users) FROM users WHERE username = '${username}';", connectionToDb);
-            var commandResult = cmd.ExecuteNonQuery();
+            object commandResult = cmd.ExecuteScalar();
 
             connectionToDb.Close();
             if (Convert.ToSByte(commandResult) > 0)

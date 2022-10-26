@@ -58,6 +58,17 @@ namespace shedule_bot
                         catch (System.Exception ex) { Console.WriteLine(ex); }
                         break;
 
+                    case "/check":
+                        try
+                        {
+                            if (UserInterface.CheckIfUserExisting(_botUpdates.username))
+                                bot?.SendTextMessageAsync(chatId: chatId, text: "true");
+                            else
+                                bot?.SendTextMessageAsync(chatId: chatId, text: "false");
+                        }
+                        catch (System.Exception ex) { Console.WriteLine(ex); }
+                        break;
+
                     //it's code work but I'm not sure how correct and better i can do 
                     case "1KCM-A":
                         UserInterface.InitialCreateUser(_botUpdates.username, "1KCM-A");
