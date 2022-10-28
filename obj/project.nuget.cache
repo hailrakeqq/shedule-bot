@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "A5tly7IxsPsw6SxZwkzSX5+pDgeq0TDNO9tm1WG3qpg3u4sqa1NiK6Se1dUB7DOQhlCH4QkB+Fx0PvFJWJMXsA==",
+  "dgSpecHash": "aKWj0zncyCRtKVkTRUOyUlzrDaT5eY9aW8HBtlsC4Zvi/z2n/O8pLxy+GkBFmA88z0AU7YFv5OtqsjYp7h02NQ==",
   "success": true,
   "projectFilePath": "/media/hdd/code/shedule-bot/scheduleBot.csproj",
   "expectedPackageFiles": [
     "/home/desktop/.nuget/packages/dotnetenv/2.3.0/dotnetenv.2.3.0.nupkg.sha512",
     "/home/desktop/.nuget/packages/entityframework/6.4.4/entityframework.6.4.4.nupkg.sha512",
+    "/home/desktop/.nuget/packages/exceldatareader/3.6.0/exceldatareader.3.6.0.nupkg.sha512",
     "/home/desktop/.nuget/packages/humanizer.core/2.8.26/humanizer.core.2.8.26.nupkg.sha512",
     "/home/desktop/.nuget/packages/microsoft.csharp/4.7.0/microsoft.csharp.4.7.0.nupkg.sha512",
     "/home/desktop/.nuget/packages/microsoft.entityframeworkcore/6.0.10/microsoft.entityframeworkcore.6.0.10.nupkg.sha512",

@@ -84,6 +84,14 @@ namespace shedule_bot
                         ChooseGroupOrCreateUser(chatId, _botUpdates, "3KCM-11");
                         break;
 
+                    case "get shedule":
+                        try
+                        {
+                            Xls.Print();
+                        }
+                        catch (System.Exception ex) { Console.WriteLine(ex); }
+                        break;
+
                     case "download":
                         {
                             await using Stream stream = System.IO.File.OpenRead(@"./main.xls");

@@ -35,8 +35,8 @@ namespace shedule_bot
             ReplyKeyboardMarkup replyKeyboardMarkup = new(
                 new[]
                     {
-                        new KeyboardButton[] { "download" },
-                        new KeyboardButton[] { "Змінити групу" } //change group func is not realized now(
+                        new KeyboardButton[] { "download", "get shedule" },
+                        new KeyboardButton[] { "Змінити групу" }
                     })
             { ResizeKeyboard = true };
 
