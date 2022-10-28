@@ -58,54 +58,31 @@ namespace shedule_bot
                         catch (System.Exception ex) { Console.WriteLine(ex); }
                         break;
 
-                    case "/check":
-                        try
-                        {
-                            if (UserInterface.CheckIfUserExisting(_botUpdates.username))
-                                bot?.SendTextMessageAsync(chatId: chatId, text: "true");
-                            else
-                                bot?.SendTextMessageAsync(chatId: chatId, text: "false");
-                        }
-                        catch (System.Exception ex) { Console.WriteLine(ex); }
+                    case "Змінити групу":
+                        ToolChain.GroupInline(bot, chatId, cts.Token);
                         break;
 
-                    //it's code work but I'm not sure how correct and better i can do 
                     case "1KCM-A":
-                        UserInterface.InitialCreateUser(_botUpdates.username, "1KCM-A");
-                        await bot.SendTextMessageAsync(chatId: message.Chat.Id, text: $"Ви успішно вибрали групу: 1KCM-A\nЯкщо ви обрали не правильно або хочете змінити групу натисніть кнопку \"змінити групу\"");
-                        ToolChain.MainInline(bot, chatId, cts.Token);
+                        ChooseGroupOrCreateUser(chatId, _botUpdates, "1KCM-A");
                         break;
                     case "1KCM-B":
-                        UserInterface.InitialCreateUser(_botUpdates.username, "1KCM-B");
-                        await bot.SendTextMessageAsync(chatId: message.Chat.Id, text: $"Ви успішно вибрали групу: 1KCM-B\nЯкщо ви обрали не правильно або хочете змінити групу натисніть кнопку \"змінити групу\"");
-                        ToolChain.MainInline(bot, chatId, cts.Token);
+                        ChooseGroupOrCreateUser(chatId, _botUpdates, "1KCM-B");
                         break;
                     case "2KCM-A":
-                        UserInterface.InitialCreateUser(_botUpdates.username, "2KCM-A");
-                        await bot.SendTextMessageAsync(chatId: message.Chat.Id, text: $"Ви успішно вибрали групу: 2KCM-A\nЯкщо ви обрали не правильно або хочете змінити групу натисніть кнопку \"змінити групу\"");
-                        ToolChain.MainInline(bot, chatId, cts.Token);
+                        ChooseGroupOrCreateUser(chatId, _botUpdates, "2KCM-A");
                         break;
                     case "2KCM-B":
-                        UserInterface.InitialCreateUser(_botUpdates.username, "2KCM-B");
-                        await bot.SendTextMessageAsync(chatId: message.Chat.Id, text: $"Ви успішно вибрали групу: 2KCM-B\nЯкщо ви обрали не правильно або хочете змінити групу натисніть кнопку \"змінити групу\"");
-                        ToolChain.MainInline(bot, chatId, cts.Token);
+                        ChooseGroupOrCreateUser(chatId, _botUpdates, "2KCM-B");
                         break;
                     case "3KCM-A":
-                        UserInterface.InitialCreateUser(_botUpdates.username, "3KCM-A");
-                        await bot.SendTextMessageAsync(chatId: message.Chat.Id, text: $"Ви успішно вибрали групу: 3KCM-A\nЯкщо ви обрали не правильно або хочете змінити групу натисніть кнопку \"змінити групу\"");
-                        ToolChain.MainInline(bot, chatId, cts.Token);
+                        ChooseGroupOrCreateUser(chatId, _botUpdates, "3KCM-A");
                         break;
                     case "3KCM-B":
-                        UserInterface.InitialCreateUser(_botUpdates.username, "3KCM-B");
-                        await bot.SendTextMessageAsync(chatId: message.Chat.Id, text: $"Ви успішно вибрали групу: 3KCM-B\nЯкщо ви обрали не правильно або хочете змінити групу натисніть кнопку \"змінити групу\"");
-                        ToolChain.MainInline(bot, chatId, cts.Token);
+                        ChooseGroupOrCreateUser(chatId, _botUpdates, "3KCM-B");
                         break;
                     case "3KCM-11":
-                        UserInterface.InitialCreateUser(_botUpdates.username, "3KCM-11");
-                        await bot.SendTextMessageAsync(chatId: message.Chat.Id, text: $"Ви успішно вибрали групу: 3KCM-11\nЯкщо ви обрали не правильно або хочете змінити групу натисніть кнопку \"змінити групу\"");
-                        ToolChain.MainInline(bot, chatId, cts.Token);
+                        ChooseGroupOrCreateUser(chatId, _botUpdates, "3KCM-11");
                         break;
-
 
                     case "download":
                         {
@@ -119,6 +96,14 @@ namespace shedule_bot
                         }
                 }
             }
+        }
+
+        private static void ChooseGroupOrCreateUser(long chatId, BotUpdates _botUpdates, string group)
+        {
+            if (UserInterface.CheckIfUserExisting(_botUpdates.username))
+                UserInterface.ChangeUserGroup(_botUpdates.username, group, chatId);
+            else
+                UserInterface.InitialCreateUser(_botUpdates.username, group, chatId);
         }
 
         public static async Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)

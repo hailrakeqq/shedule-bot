@@ -10,37 +10,7 @@ namespace shedule_bot.backend
         static CancellationTokenSource cts = new CancellationTokenSource();
         static Update? update;
 
-        // public static string InitialChooseUserGroup(long chatId)
-        // {
-        //     string chooseGroup = "";
-        //     switch (update?.Message?.Text?.ToLower())
-        //     {
-        //         case "1KCM-A":
-        //             chooseGroup = "1KCM-A";
-        //             break;
-        //         case "1KCM-B":
-        //             chooseGroup = "1KCM-B";
-        //             break;
-        //         case "2KCM-A":
-        //             chooseGroup = "2KCM-A";
-        //             break;
-        //         case "2KCM-B":
-        //             chooseGroup = "2KCM-B";
-        //             break;
-        //         case "3KCM-A":
-        //             chooseGroup = "3KCM-A";
-        //             break;
-        //         case "3KCM-B":
-        //             chooseGroup = "3KCM-B";
-        //             break;
-        //         case "3KCM-11":
-        //             chooseGroup = "3KCM-11";
-        //             break;
-        //     }
-        //     return chooseGroup;
-        // }
-
-        public static void InitialCreateUser(string username, string group)
+        public async static void InitialCreateUser(string username, string group, long chatId)
         {
             using (ApplicationContext db = new ApplicationContext())
             {
@@ -49,6 +19,21 @@ namespace shedule_bot.backend
                 db.Users.Add(newUser);
                 db.SaveChanges();
             }
+            await bot.SendTextMessageAsync(chatId: chatId, text: $"Ви успішно вибрали групу: {group}\nЯкщо ви обрали не правильно або хочете змінити групу натисніть кнопку \"змінити групу\"");
+            ToolChain.MainInline(bot, chatId, cts.Token); //send main inline keyboard after succesfull user create 
+        }
+
+        //function for change Usergroup info for existing user
+        public async static void ChangeUserGroup(string username, string group, long chatId)
+        {
+            using var connectionToDb = new NpgsqlConnection(ApplicationContext.GetConnectionString());
+            connectionToDb.Open();
+            var cmd = new NpgsqlCommand($"UPDATE users SET usergroup = '{group}' WHERE username = '{username}';", connectionToDb);
+            object commandResult = cmd.ExecuteScalar();
+            connectionToDb.Close();
+
+            await bot.SendTextMessageAsync(chatId: chatId, text: $"Ви успішно змінили групу!!!\nТепер ваша група {group}");
+            ToolChain.MainInline(bot, chatId, cts.Token); //send main inline keyboard after succesfull user create 
         }
 
         //check if user exist in db; if exist => return true ; else => return false
@@ -56,7 +41,7 @@ namespace shedule_bot.backend
         {
             using var connectionToDb = new NpgsqlConnection(ApplicationContext.GetConnectionString());
             connectionToDb.Open();
-            var cmd = new NpgsqlCommand($"SELECT COUNT(users) FROM users WHERE username = '${username}';", connectionToDb);
+            var cmd = new NpgsqlCommand($"SELECT COUNT(users) FROM users WHERE username = '{username}';", connectionToDb);
             object commandResult = cmd.ExecuteScalar();
 
             connectionToDb.Close();
@@ -85,10 +70,5 @@ namespace shedule_bot.backend
             }
         }
 
-        //function for change Usergroup info for existing user
-        public static void ChangeUserGroup()
-        {
-
-        }
     }
 }
