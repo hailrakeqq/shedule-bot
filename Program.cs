@@ -87,9 +87,25 @@ namespace shedule_bot
                     case "get shedule":
                         try
                         {
-                            Xls.Print();
+                            Excel.Print();
                         }
-                        catch (System.Exception ex) { Console.WriteLine(ex); }
+                        catch (System.Exception ex) { Console.WriteLine(ex.Message); }
+                        break;
+
+                    case "create-test":
+                        try
+                        {
+                            Excel.TestCreate();
+                        }
+                        catch (System.Exception ex) { Console.WriteLine(ex.Message); }
+                        break;
+
+                    case "change-test":
+                        try
+                        {
+                            Excel.TestChange();
+                        }
+                        catch (System.Exception ex) { Console.WriteLine(ex.Message); }
                         break;
 
                     case "download":
