@@ -95,14 +95,14 @@ namespace shedule_bot
                     case "create-test":
                         try
                         {
-                            XlsTest.TestCreate();
+                            XlsTest.CreateFile();
                         }
                         catch (System.Exception ex) { Console.WriteLine(ex.Message); }
                         break;
                     case "test-view":
                         try
                         {
-                            await bot.SendTextMessageAsync(chatId: chatId, text: XlsTest.TestView());
+                            await bot.SendTextMessageAsync(chatId: chatId, text: XlsTest.ViewDataFromCell());
                         }
                         catch (System.Exception ex) { Console.WriteLine(ex.Message); }
                         break;
@@ -110,7 +110,7 @@ namespace shedule_bot
                     case "change-test":
                         try
                         {
-                            XlsTest.TestChange();
+                            XlsTest.ChangeCellData();
                         }
                         catch (System.Exception ex) { Console.WriteLine(ex.Message); }
                         break;
