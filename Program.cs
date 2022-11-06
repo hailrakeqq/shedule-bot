@@ -84,18 +84,25 @@ namespace shedule_bot
                         ChooseGroupOrCreateUser(chatId, _botUpdates, "3KCM-11");
                         break;
 
-                    case "get shedule":
-                        try
-                        {
-                            Excel.Print();
-                        }
-                        catch (System.Exception ex) { Console.WriteLine(ex.Message); }
-                        break;
+                    // case "get shedule":
+                    //     try
+                    //     {
+                    //         Excel.Print();
+                    //     }
+                    //     catch (System.Exception ex) { Console.WriteLine(ex.Message); }
+                    //     break;
 
                     case "create-test":
                         try
                         {
-                            Excel.TestCreate();
+                            XlsTest.TestCreate();
+                        }
+                        catch (System.Exception ex) { Console.WriteLine(ex.Message); }
+                        break;
+                    case "test-view":
+                        try
+                        {
+                            await bot.SendTextMessageAsync(chatId: chatId, text: XlsTest.TestView());
                         }
                         catch (System.Exception ex) { Console.WriteLine(ex.Message); }
                         break;
@@ -103,7 +110,7 @@ namespace shedule_bot
                     case "change-test":
                         try
                         {
-                            Excel.TestChange();
+                            XlsTest.TestChange();
                         }
                         catch (System.Exception ex) { Console.WriteLine(ex.Message); }
                         break;
