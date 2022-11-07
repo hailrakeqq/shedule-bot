@@ -8,18 +8,17 @@ namespace shedule_bot.backend
     {
         static ITelegramBotClient bot = new TelegramBotClient(ToolChain.GetItemFromDotEnv("TOKEN"));
         static CancellationTokenSource cts = new CancellationTokenSource();
-        static Update? update;
 
         public async static void InitialCreateUser(string username, string group, long chatId)
         {
             using (ApplicationContext db = new ApplicationContext())
             {
-                User newUser = new User { username = username, usergroup = group };
+                User newUser = new User { username = username, usergroup = group, timestamp = "16:00" }; //16:00 default timestamp for all userss 
 
                 db.Users.Add(newUser);
                 db.SaveChanges();
             }
-            await bot.SendTextMessageAsync(chatId: chatId, text: $"Ви успішно вибрали групу: {group}\nЯкщо ви обрали не правильно або хочете змінити групу натисніть кнопку \"змінити групу\"");
+            await bot.SendTextMessageAsync(chatId: chatId, text: $"Ви успішно вибрали групу: {group}\nЯкщо ви обрали не правильно або хочете змінити групу натисніть кнопку \"змінити групу\"\nЧас нагадування стоїть 16:00 стандартно для всіх користувачів , ви можете змінити час за допомогою команди \"Змінити час нагадування <час нагадування>\"");
             ToolChain.MainInline(bot, chatId, cts.Token); //send main inline keyboard after succesfull user create 
         }
 
@@ -33,6 +32,18 @@ namespace shedule_bot.backend
             connectionToDb.Close();
 
             await bot.SendTextMessageAsync(chatId: chatId, text: $"Ви успішно змінили групу!!!\nТепер ваша група {group}");
+            ToolChain.MainInline(bot, chatId, cts.Token); //send main inline keyboard after succesfull user create 
+        }
+
+        public async static void ChangeUserTimestamp(string username, string timestamp, long chatId)
+        {
+            using var connectionToDb = new NpgsqlConnection(ApplicationContext.GetConnectionString());
+            connectionToDb.Open();
+            var cmd = new NpgsqlCommand($"UPDATE users SET timestamp = '{timestamp}' WHERE username = '{username}';", connectionToDb);
+            object commandResult = cmd.ExecuteScalar();
+            connectionToDb.Close();
+
+            await bot.SendTextMessageAsync(chatId: chatId, text: $"Ви успішно змінили час відправлення нагадування!!!\nТепер нагадування будуть приходити в *{timestamp}*!");
             ToolChain.MainInline(bot, chatId, cts.Token); //send main inline keyboard after succesfull user create 
         }
 

@@ -12,6 +12,7 @@ namespace shedule_bot.backend
         public int id { get; set; }
         public string? username { get; set; }
         public string? usergroup { get; set; }
+        public string? timestamp { get; set; }
     }
 
     public class ApplicationContext : DbContext
@@ -25,14 +26,4 @@ namespace shedule_bot.backend
         public static string GetConnectionString() => connectionString;
 
     }
-    // public class DataBaseConnect
-    // {
-    //     private static string connectionString = $"Host=localhost;Username=postgres;Password=${ToolChain.GetItemFromDotEnv("DbPassword")};Database=kemkdb";
-
-    //     public async static void NpgsqlConnect() // Npgsql.NpgsqlConnection
-    //     {
-    //         await using var conn = new NpgsqlConnection(connectionString);
-    //         await conn.OpenAsync();
-    //     }
-    // }
 }

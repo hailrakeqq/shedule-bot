@@ -11,8 +11,6 @@ namespace shedule_bot.backend
 
                 string? test = worksheet.Cell("A1").Value.ToString();
                 return test;
-                // worksheet.Cell("A1").Value = "Hello World!";
-                // workbook.SaveAs("test.xlsx");
             }
         }
 

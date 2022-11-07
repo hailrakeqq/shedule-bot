@@ -37,7 +37,7 @@ namespace shedule_bot
                     {
                         new KeyboardButton[] { "download", "get shedule" },
                         new KeyboardButton[] { "create-test", "change-test", "test-view"},
-                        new KeyboardButton[] { "Змінити групу" }
+                        new KeyboardButton[] { "Змінити групу", "Змінити час нагадування" }
                     })
             { ResizeKeyboard = true };
 

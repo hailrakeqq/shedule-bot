@@ -1,9 +1,9 @@
-﻿using System;
-using Telegram.Bot;
+﻿using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.InputFiles;
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 using shedule_bot.backend;
 
 namespace shedule_bot
@@ -45,6 +45,29 @@ namespace shedule_bot
                 var botUpdatesString = JsonConvert.SerializeObject(botUpdates);
                 System.IO.File.WriteAllText(fileName, botUpdatesString);
 
+                //test timestamp change
+                Regex trueDataChangeCommandPattern = new Regex(@"Змінити час нагадування \b\w{1,2}:\w{1,2}\b");
+                Regex trueDataPattern = new Regex(@"\b\w{1,2}:\w{1,2}\b");
+
+                MatchCollection checkDataExist = trueDataPattern.Matches(messageText);
+                MatchCollection checkDataChangeCommandPatternExist = trueDataChangeCommandPattern.Matches(messageText);
+                if (message.Text == "Змінити час нагадування" || checkDataChangeCommandPatternExist.Count > 0)
+                {
+                    string[] currentCommand = message.Text.Split(" ");
+                    try
+                    {
+                        if (checkDataExist.Count == 0)
+                            await bot.SendTextMessageAsync(chatId, text: "Введіть команду для зміни часу нагадування:\nЗмінити час нагадування <час (17:00)>");
+                        else
+                            UserInterface.ChangeUserTimestamp(_botUpdates.username, currentCommand[3], chatId);
+                    }
+                    catch (System.Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        await bot.SendTextMessageAsync(chatId, text: "Введіть команду для зміни часу нагадування:\nЗмінити час нагадування <час (17:00)>");
+                    }
+                }
+
                 switch (message.Text)
                 {
                     case "/start":
@@ -84,14 +107,18 @@ namespace shedule_bot
                         ChooseGroupOrCreateUser(chatId, _botUpdates, "3KCM-11");
                         break;
 
-                    // case "get shedule":
-                    //     try
-                    //     {
-                    //         Excel.Print();
-                    //     }
-                    //     catch (System.Exception ex) { Console.WriteLine(ex.Message); }
-                    //     break;
+                    case "download":
+                        {
+                            await using Stream stream = System.IO.File.OpenRead(@"./main.xls");
+                            await botClient.SendDocumentAsync(
+                            chatId: chatId,
+                            document: new InputOnlineFile(content: stream, fileName: "main.xls"),
+                            caption: "Розклад на 1 семестр 2022",
+                            cancellationToken: cancellationToken);
+                            break;
+                        }
 
+                    //test section
                     case "create-test":
                         try
                         {
@@ -114,17 +141,6 @@ namespace shedule_bot
                         }
                         catch (System.Exception ex) { Console.WriteLine(ex.Message); }
                         break;
-
-                    case "download":
-                        {
-                            await using Stream stream = System.IO.File.OpenRead(@"./main.xls");
-                            await botClient.SendDocumentAsync(
-                            chatId: chatId,
-                            document: new InputOnlineFile(content: stream, fileName: "main.xls"),
-                            caption: "Розклад на 1 семестр 2022",
-                            cancellationToken: cancellationToken);
-                            break;
-                        }
                 }
             }
         }
